@@ -1,0 +1,100 @@
+[
+  {
+    "id": "kb-001",
+    "topic": "WEF — empregos criados e eliminados até 2030",
+    "tags": ["wef", "fórum econômico", "2030", "empregos", "mundo"],
+    "fact": "Até 2030, 170 milhões de novos postos de trabalho devem ser criados e 92 milhões eliminados globalmente — um saldo líquido positivo de 78 milhões, mas equivalente a 22% dos empregos atuais sendo reestruturados. (Fonte: WEF Future of Jobs Report 2025)",
+    "source_url": "https://www.weforum.org/press/2025/01/future-of-jobs-report-2025-78-million-new-job-opportunities-by-2030-but-urgent-upskilling-needed-to-prepare-workforces/"
+  },
+  {
+    "id": "kb-002",
+    "topic": "WEF — obsolescência de habilidades",
+    "tags": ["wef", "habilidades", "obsolescência", "requalificação"],
+    "fact": "Quase 40% das habilidades profissionais exigidas hoje devem mudar até 2030, e 63% dos empregadores citam a lacuna de habilidades como principal barreira à transformação de seus negócios. (Fonte: WEF Future of Jobs Report 2025)",
+    "source_url": "https://blog.coursera.org/wef-future-of-jobs-report-2025/"
+  },
+  {
+    "id": "kb-003",
+    "topic": "Dario Amodei — previsão sobre empregos de escritório júnior",
+    "tags": ["anthropic", "dario amodei", "escritório júnior", "previsão", "eua"],
+    "fact": "O CEO da Anthropic, Dario Amodei, declarou em maio de 2025 que a IA pode eliminar até 50% dos empregos de escritório de nível inicial em um a cinco anos, e alertou que o desemprego pode chegar a 10-20% no mesmo período. (Fonte: Axios, maio de 2025)",
+    "source_url": "https://www.axios.com/2025/05/28/ai-jobs-white-collar-unemployment-anthropic"
+  },
+  {
+    "id": "kb-004",
+    "topic": "IBM — pausa de contratação citando IA",
+    "tags": ["ibm", "contratação", "back-office", "caso real", "eua"],
+    "fact": "Em maio de 2023, o CEO da IBM, Arvind Krishna, anunciou pausa na contratação para cerca de 7.800 vagas — cerca de 30% das funções administrativas sem contato direto com clientes — por considerá-las substituíveis por IA nos anos seguintes. (Fonte: Bloomberg News, maio de 2023)",
+    "source_url": "https://www.bloomberg.com/news/articles/2023-05-01/ibm-to-pause-hiring-for-back-office-jobs-that-ai-could-kill"
+  },
+  {
+    "id": "kb-005",
+    "topic": "Frey & Osborne — telemarketing e risco de automação",
+    "tags": ["telemarketing", "automação", "risco", "estudo clássico", "oxford"],
+    "fact": "No estudo seminal de Oxford sobre computerização de empregos, operadores de telemarketing, examinadores de títulos e costureiros manuais aparecem com 99% de probabilidade de substituição por máquinas. (Fonte: Frey & Osborne, \"The Future of Employment\", Universidade de Oxford, 2013)",
+    "source_url": "https://www.researchgate.net/publication/271523899_The_Future_of_Employment_How_Susceptible_Are_Jobs_to_Computerisation"
+  },
+  {
+    "id": "kb-006",
+    "topic": "Stanford — hiato de emprego para trabalhadores jovens",
+    "tags": ["stanford", "jovens", "22-25 anos", "ia generativa", "eua"],
+    "fact": "O emprego de trabalhadores de 22 a 25 anos em ocupações mais expostas à IA está 19% abaixo da trajetória esperada se tivesse acompanhado o ritmo de trabalhadores menos expostos; trabalhadores experientes não mostram esse hiato. (Fonte: Stanford Digital Economy Lab, \"Canaries in the Coal Mine\", agosto de 2026)",
+    "source_url": "https://digitaleconomy.stanford.edu/news/canariesaug26/"
+  },
+  {
+    "id": "kb-007",
+    "topic": "Challenger, Gray & Christmas — cortes de vagas citando IA",
+    "tags": ["challenger", "demissões", "eua", "2025", "relatório"],
+    "fact": "A consultoria de recolocação Challenger, Gray & Christmas registrou 54.836 cortes de vagas nos EUA em 2025 com a IA citada explicitamente como motivo pelas empresas. (Fonte: Challenger Report, 2025 Year-End)",
+    "source_url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/"
+  },
+  {
+    "id": "kb-008",
+    "topic": "McKinsey — trabalhadores que precisarão trocar de ocupação",
+    "tags": ["mckinsey", "reskilling", "requalificação", "2030", "mundo"],
+    "fact": "Entre 75 e 375 milhões de trabalhadores no mundo (até 14% da força de trabalho global) podem precisar trocar de categoria ocupacional e aprender novas habilidades até 2030 por causa da automação. (Fonte: McKinsey Global Institute, \"Jobs Lost, Jobs Gained\", 2017)",
+    "source_url": "https://www.mckinsey.com/~/media/mckinsey/industries/public%20and%20social%20sector/our%20insights/what%20the%20future%20of%20work%20will%20mean%20for%20jobs%20skills%20and%20wages/mgi%20jobs%20lost-jobs%20gained_in%20brief_december%202017.pdf"
+  },
+  {
+    "id": "kb-009",
+    "topic": "Atendimento ao cliente — projeção Forrester",
+    "tags": ["atendimento ao cliente", "call center", "forrester", "2030"],
+    "fact": "A consultoria Forrester projeta que a IA deve eliminar cerca de metade dos empregos atuais de atendimento ao cliente até 2030. (Fonte: Forrester, via CX Dive)",
+    "source_url": "https://www.customerexperiencedive.com/news/forrester-predicts-half-customer-service-jobs-cut-AI/821797/"
+  },
+  {
+    "id": "kb-010",
+    "topic": "Atendimento ao cliente — cortes já realizados",
+    "tags": ["microsoft", "uber", "atendimento ao cliente", "caso real"],
+    "fact": "Em 2025, empresas como Uber (corte de 10% na operação de atendimento ao cliente) e Microsoft (redução de cerca de 50 mil para 40 mil pessoas na área de suporte) já executaram cortes atribuídos à automação por IA. (Fonte: Bloomberg, julho de 2026)",
+    "source_url": "https://www.bloomberg.com/news/articles/2026-07-28/ai-wipes-out-customer-service-jobs-at-microsoft-uber-cba"
+  },
+  {
+    "id": "kb-011",
+    "topic": "Brasil — exposição da força de trabalho à IA generativa",
+    "tags": ["brasil", "exposição", "ia generativa", "força de trabalho"],
+    "fact": "No 3º trimestre de 2025, cerca de 30 milhões de trabalhadores brasileiros (29,6% da população ocupada) estavam em ocupações com algum grau de exposição à IA generativa; 5,2 milhões estavam no grau mais alto de exposição. (Fonte: FGV/IBRE, \"Inteligência artificial generativa e mercado de trabalho no Brasil\")",
+    "source_url": "https://blogdoibre.fgv.br/posts/inteligencia-artificial-generativa-e-mercado-de-trabalho-no-brasil-evidencias-iniciais-sobre"
+  },
+  {
+    "id": "kb-012",
+    "topic": "Brasil — estimativa LCA4intelligence/OIT",
+    "tags": ["brasil", "empregos impactados", "oit", "profissões"],
+    "fact": "A IA generativa deve impactar 31,3 milhões de empregos no Brasil e afetar diretamente ao menos 13 áreas profissionais, somando 5,538 milhões de trabalhadores no grupo de maior impacto, segundo análise da LCA 4intelligence baseada em metodologia da OIT. (Fonte: LCA 4intelligence/OIT, 2024-2025)",
+    "source_url": "https://www.brasilagro.com.br/conteudo/ia-deve-impactar-313-mi-de-empregos-no-brasil-e-afetar-13-profissoes.html"
+  },
+  {
+    "id": "kb-013",
+    "topic": "Brasil — trabalhadores em alta exposição",
+    "tags": ["brasil", "alta exposição", "automação quase completa"],
+    "fact": "5,4% dos trabalhadores brasileiros estão em ocupações de alta exposição a ferramentas como o ChatGPT, com risco de terem suas funções quase completamente automatizadas — com destaque para funções administrativas no setor público. (Fonte: FGV/IBRE)",
+    "source_url": "https://blogdoibre.fgv.br/posts/inteligencia-artificial-generativa-e-mercado-de-trabalho-no-brasil-evidencias-iniciais-sobre"
+  },
+  {
+    "id": "kb-014",
+    "topic": "América Latina — exposição regional à IA generativa",
+    "tags": ["américa latina", "banco mundial", "exposição", "região"],
+    "fact": "Entre 30% e 40% dos empregos na América Latina e Caribe estão expostos, em algum grau, à IA generativa — com o nível de exposição fortemente ligado ao grau de desenvolvimento econômico de cada país. (Fonte: Banco Mundial / World Bank Open Knowledge Repository)",
+    "source_url": "https://openknowledge.worldbank.org/bitstreams/a04e7a12-59c1-4ba2-a016-df87617ce32e/download"
+  }
+]
