@@ -8,7 +8,7 @@ Bambolino Bonjovee é uma persona fictícia e satírica — uma IA que se aprese
 
 ```bash
 npm install
-cp .env.example .env
+cp .env.example .env   # Windows (cmd): copy .env.example .env
 # edite .env e cole sua ANTHROPIC_API_KEY
 npm start
 ```
@@ -25,16 +25,21 @@ Abra `http://localhost:3000` no Chrome ou Edge (o reconhecimento de voz via `web
 A resposta do Bambolino é falada via **edge-tts** — usa as vozes Neural da Microsoft (mesma tecnologia do Azure Cognitive Services) de graça, sem chave de API nem conta — com fallback automático para a `SpeechSynthesis` nativa do navegador.
 
 - **Backend** (`GET /api/speak?text=...`): sobe um processo `edge-tts` (via `child_process.spawn`) que sintetiza o texto para um `.mp3` temporário, lê o arquivo e repassa como `audio/mpeg` para o navegador. O arquivo temporário é apagado depois de cada requisição. Precisa de internet (chama um serviço público da Microsoft), mas não precisa de conta nem chave.
-- **Setup** (uma vez só):
+- **Setup** (uma vez só) — macOS/Linux:
   ```bash
   cd aria-voice-agent
   python3 -m venv .venv
-  source .venv/bin/activate
-  pip install edge-tts
+  .venv/bin/pip install edge-tts
   ```
-  O servidor já aponta para `.venv/bin/edge-tts` por padrão — nada para configurar no `.env`.
+- **Setup** (uma vez só) — Windows (cmd ou PowerShell):
+  ```bat
+  cd aria-voice-agent
+  python -m venv .venv
+  .venv\Scripts\pip install edge-tts
+  ```
+  O servidor detecta o sistema operacional sozinho e aponta para `.venv/bin/edge-tts` (macOS/Linux) ou `.venv\Scripts\edge-tts.exe` (Windows) por padrão — nada para configurar no `.env`. Se o Python não estiver no PATH, reinstale marcando "Add python.exe to PATH" no instalador.
 - **Sem o edge-tts instalado:** o endpoint responde `501` de propósito, e o frontend detecta isso e usa `SpeechSynthesis` do navegador automaticamente — a demo funciona igual, só com voz mais robótica.
-- **Trocar de voz:** rode `.venv/bin/edge-tts --list-voices | grep pt-BR` para ver as opções e defina `EDGE_TTS_VOICE` no `.env`. O padrão é `pt-BR-AntonioNeural`.
+- **Trocar de voz:** rode `.venv/bin/edge-tts --list-voices` (Windows: `.venv\Scripts\edge-tts --list-voices`) e filtre por `pt-BR` para ver as opções; defina `EDGE_TTS_VOICE` no `.env`. O padrão é `pt-BR-AntonioNeural`.
 
 ## Base de conhecimento
 

@@ -19,7 +19,12 @@ const client = new Anthropic();
 
 // Voz via edge-tts (vozes Neural da Microsoft, de graça, sem chave de API nem conta —
 // precisa de internet). Instalado no mesmo venv do projeto — ver README para o setup.
-const EDGE_TTS_BIN = process.env.EDGE_TTS_BIN_PATH || path.join(__dirname, ".venv", "bin", "edge-tts");
+// O venv do Python usa pastas/extensão diferentes no Windows (Scripts\*.exe) vs. macOS/Linux (bin/*).
+const EDGE_TTS_BIN =
+  process.env.EDGE_TTS_BIN_PATH ||
+  (process.platform === "win32"
+    ? path.join(__dirname, ".venv", "Scripts", "edge-tts.exe")
+    : path.join(__dirname, ".venv", "bin", "edge-tts"));
 const EDGE_TTS_VOICE = process.env.EDGE_TTS_VOICE || "pt-BR-AntonioNeural";
 const EDGE_TTS_RATE = process.env.EDGE_TTS_RATE || "+12%"; // fala um pouco mais rápida — resposta soa mais ágil
 
