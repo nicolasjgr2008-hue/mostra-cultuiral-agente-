@@ -682,10 +682,18 @@ function speakWithBrowserTts(text) {
   if (ptVoice) utterance.voice = ptVoice;
 
   utterance.onend = () => setState("idle", "Aguardando ativação...");
-  utterance.onerror = () => setState("idle", "Aguardando ativação...");
+  utterance.onerror = (event) => {
+    console.error("Erro na síntese de voz do navegador:", event.error);
+    setState("idle", "Aguardando ativação...");
+  };
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+  // Chrome/Edge têm um bug conhecido: cancel() imediatamente antes de speak() às
+  // vezes engole a fala sem erro nenhum. Só cancela se já houver algo tocando, e dá
+  // um respiro de um tick antes de falar, pra não cair nessa corrida.
+  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+    window.speechSynthesis.cancel();
+  }
+  setTimeout(() => window.speechSynthesis.speak(utterance), 50);
 }
 
 talkBtn.addEventListener("click", () => {
