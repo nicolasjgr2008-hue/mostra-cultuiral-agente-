@@ -1,41 +1,36 @@
 BAMBOLINO BONJOVEE — Como rodar no Windows
 ============================================
 
-1. Extraia esta pasta inteira em qualquer lugar (ex: Área de Trabalho).
-   Mantenha todos os arquivos e pastas juntos (bambolino.exe, public\, data\, .env.example).
+FORMA MAIS SIMPLES (recomendada): bambolino.html
+--------------------------------------------------
+Um único arquivo HTML, sem instalar nada (sem Node, sem Python, sem Git).
 
-2. Renomeie o arquivo ".env.example" para ".env" (ou copie ele e renomeie a cópia).
-   Abra o ".env" com o Bloco de Notas e cole sua chave da Anthropic na linha:
-       ANTHROPIC_API_KEY=sk-ant-...
-   (pegue a chave em https://console.anthropic.com/settings/keys, se não tiver
-   uma à mão — nenhuma chave real vem dentro deste pacote, por segurança).
+1. Baixa só o arquivo "bambolino.html" (não precisa da pasta toda).
+2. Dê DUPLO CLIQUE nele — abre direto no seu navegador padrão.
+3. Clica no microfone, fala, espera a resposta. Pronto.
 
-3. Dê DUPLO CLIQUE em "bambolino.exe".
-   - Vai abrir uma janela preta (terminal) — é normal, não feche ela.
-   - O navegador deve abrir sozinho em http://localhost:3000
-   - Se o Windows Defender / SmartScreen avisar "Windows protegeu seu PC",
-     clique em "Mais informações" e depois em "Executar assim mesmo"
-     (isso acontece porque o .exe não é assinado digitalmente, não porque
-     tem algo de errado com ele).
+Aviso: nessa versão a chave da Anthropic fica dentro do próprio arquivo
+(visível pra quem abrir "Inspecionar" no navegador). Certo pra uma máquina
+específica sob supervisão (como um quiosque de mostra cultural) — não
+compartilhe esse arquivo publicamente.
 
-4. Se o navegador não abrir sozinho, abra manualmente e digite:
-   http://localhost:3000
-
-5. Pra fechar o Bambolino, feche a janela preta do terminal.
+A voz usa a síntese nativa do navegador (um pouco mais robótica, mas
+funciona sem instalar nada).
 
 ------------------------------------------------------------
-Voz (opcional, pra ficar mais natural)
+FORMA ALTERNATIVA: bambolino.exe (+ pasta public/data/.env)
 ------------------------------------------------------------
-Sem nada extra, o Bambolino já fala usando a voz nativa do navegador
-(um pouco mais robótica, mas funciona sem instalar nada).
+Mesma interface, mas roda um servidor local — precisa da pasta inteira
+(bambolino.exe, public\, data\, .env) junta, não só o .exe sozinho.
 
-Pra usar a voz Neural da Microsoft (mais natural), instale o Python:
-  1. https://www.python.org/downloads/ — baixe e instale
-     (marque "Add python.exe to PATH" durante a instalação).
-  2. Abra o "Prompt de Comando" ou "Git Bash" NESTA MESMA PASTA
-     (clique com o botão direito dentro da pasta > "Abrir no Terminal",
-     ou navegue até aqui com "cd").
-  3. Rode:
-       python -m venv .venv
-       .venv\Scripts\pip install edge-tts
-  4. Feche o bambolino.exe (se estiver aberto) e abra de novo.
+1. Renomeie ".env.example" para ".env" e cole sua ANTHROPIC_API_KEY nele.
+2. Dê duplo clique em "bambolino.exe" — abre uma janela preta (não feche)
+   e o navegador abre sozinho em http://localhost:3000.
+3. Se o SmartScreen bloquear, clique em "Mais informações" → "Executar
+   assim mesmo".
+
+Voz (opcional, pra ficar mais natural que o .html): instale o Python
+(https://www.python.org/downloads/, marcando "Add python.exe to PATH"),
+depois rode nesta pasta:
+    python -m venv .venv
+    .venv\Scripts\pip install edge-tts

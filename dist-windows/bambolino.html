@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bambolino Bonjovee — IA Substituta de Pessoal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#050810;
+  --panel:rgba(255,255,255,.03);
+  --panel-strong:rgba(255,255,255,.045);
+  --border:rgba(255,255,255,.08);
+  --cyan:#00c8ff;
+  --purple:#7f5af0;
+  --red:#ff4d6d;
+  --text:#e0e8ff;
+  --dim:#5a6a8f;
+  --font-display:'Orbitron',system-ui,sans-serif;
+  --font-body:'Rajdhani',system-ui,-apple-system,sans-serif;
+  --font-mono:'Share Tech Mono','JetBrains Mono',monospace;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+
+.lab-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  overflow:hidden;
+  background:var(--bg);
+}
+
+.lab-glow{position:absolute;border-radius:50%;filter:blur(70px);mix-blend-mode:screen}
+.lab-glow.g1{
+  width:52vmax;height:52vmax;top:-18vmax;left:-16vmax;
+  background:radial-gradient(circle,rgba(0,200,255,.34),transparent 68%);
+  animation:labDrift1 24s ease-in-out infinite alternate;
+}
+.lab-glow.g2{
+  width:46vmax;height:46vmax;bottom:-16vmax;right:-12vmax;
+  background:radial-gradient(circle,rgba(127,90,240,.26),transparent 68%);
+  animation:labDrift2 28s ease-in-out infinite alternate;
+}
+.lab-glow.g3{
+  width:34vmax;height:34vmax;top:36%;left:54%;
+  background:radial-gradient(circle,rgba(0,255,220,.14),transparent 70%);
+  animation:labDrift3 20s ease-in-out infinite alternate;
+}
+
+.lab-beam{
+  position:absolute;width:14vmax;height:140vmax;top:-50vmax;
+  background:linear-gradient(180deg,rgba(0,200,255,.14),transparent 72%);
+  filter:blur(20px);
+}
+.lab-beam.b1{left:16%;transform:rotate(13deg)}
+.lab-beam.b2{right:20%;width:10vmax;transform:rotate(-9deg);opacity:.65}
+
+.lab-pillar{
+  position:absolute;bottom:-8vmax;width:16vmax;height:65vmax;
+  filter:blur(46px);
+  background:linear-gradient(0deg,rgba(4,10,22,.9),transparent);
+}
+.lab-pillar.p1{left:4%}
+.lab-pillar.p2{right:2%;width:20vmax;height:72vmax}
+
+.lab-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 40%,transparent 40%,rgba(2,6,14,.78) 100%);
+}
+
+@keyframes labDrift1{from{transform:translate(0,0)}to{transform:translate(4vmax,3vmax)}}
+@keyframes labDrift2{from{transform:translate(0,0)}to{transform:translate(-3vmax,-4vmax)}}
+@keyframes labDrift3{from{transform:translate(0,0) scale(1)}to{transform:translate(-2vmax,2vmax) scale(1.1)}}
+
+@media (prefers-reduced-motion: reduce){
+  .lab-glow{animation:none!important}
+}
+
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,200,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,255,.04) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+
+.scanline{
+  position:fixed;top:0;left:0;right:0;height:2px;
+  background:rgba(0,200,255,.18);
+  animation:scan 6s linear infinite;
+  pointer-events:none;z-index:999;
+}
+@keyframes scan{0%{top:-10px}100%{top:100vh}}
+
+.container{
+  position:relative;z-index:1;
+  max-width:720px;margin:0 auto;padding:48px 24px 64px;
+}
+
+header{text-align:center;margin-bottom:32px}
+
+.eyebrow{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:16px;
+}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--dim);
+  box-shadow:0 0 8px var(--dim);
+  transition:background .3s,box-shadow .3s;
+}
+.status-dot.listening{background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse-dot 1s ease-in-out infinite}
+.status-dot.thinking{background:#f2c14e;box-shadow:0 0 10px #f2c14e;animation:pulse-dot .6s ease-in-out infinite}
+.status-dot.speaking{background:var(--purple);box-shadow:0 0 10px var(--purple);animation:pulse-dot .8s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
+
+.eyebrow-text{
+  font-family:var(--font-mono);
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);
+}
+
+h1{
+  font-family:var(--font-display);
+  font-size:clamp(34px,7.5vw,58px);font-weight:800;letter-spacing:2px;
+  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.15;margin-bottom:12px;
+}
+
+.tagline{font-size:15px;font-weight:500;color:var(--dim);letter-spacing:.3px}
+
+.panel{
+  position:relative;
+  background:var(--panel-strong);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:20px;
+  margin-bottom:24px;
+}
+
+.panel-corner{
+  position:absolute;width:16px;height:16px;
+  border:2px solid rgba(0,200,255,.55);
+  pointer-events:none;
+}
+.panel-corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+.panel-corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+.panel-corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none;border-radius:0 0 0 6px}
+.panel-corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+
+.panel-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-bottom:12px;margin-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.panel-label{
+  font-family:var(--font-mono);
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);
+}
+.panel-readout{
+  font-family:var(--font-mono);
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--cyan);
+  text-align:right;min-height:14px;
+}
+
+.audio-ring-wrap{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(0,200,255,.10),transparent 65%),
+    rgba(255,255,255,.02);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  margin:0 auto 20px;
+  max-width:320px;
+  aspect-ratio:1/1;
+}
+#audio-ring{width:100%;height:100%;display:block}
+
+.controls{display:flex;flex-direction:column;align-items:center;gap:14px}
+
+.talk-btn{
+  position:relative;
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#1a2440,#0a0f1e);
+  border:2px solid rgba(0,200,255,.35);
+  color:var(--text);
+  cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  transition:border-color .25s,box-shadow .25s,transform .15s;
+  box-shadow:0 0 30px rgba(0,200,255,.12);
+}
+.talk-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 40px rgba(0,200,255,.25)}
+.talk-btn:disabled{opacity:.5;cursor:default}
+.talk-btn.active{
+  border-color:var(--cyan);
+  box-shadow:0 0 50px rgba(0,200,255,.45);
+}
+.talk-btn-ring{
+  position:absolute;inset:-8px;border-radius:50%;
+  border:1px solid rgba(0,200,255,0);
+  transition:border-color .3s;
+}
+.talk-btn.active .talk-btn-ring{
+  border-color:rgba(0,200,255,.5);
+  animation:ring-pulse 1.4s ease-out infinite;
+}
+@keyframes ring-pulse{
+  0%{transform:scale(1);opacity:.8}
+  100%{transform:scale(1.35);opacity:0}
+}
+.talk-btn-icon{width:26px;height:26px;color:var(--cyan)}
+.talk-btn-label{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan)}
+
+.reset-btn{
+  font-family:var(--font-mono);
+  background:none;border:1px solid var(--border);color:var(--dim);
+  font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  padding:8px 18px;border-radius:20px;cursor:pointer;
+  transition:border-color .2s,color .2s;
+}
+.reset-btn:hover{border-color:var(--purple);color:var(--text)}
+
+.steps{
+  list-style:none;
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;
+  margin-top:22px;padding-top:18px;
+  border-top:1px solid var(--border);
+}
+.steps li{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--dim);
+}
+.step-num{
+  display:flex;align-items:center;justify-content:center;
+  width:18px;height:18px;flex:0 0 auto;
+  border:1px solid rgba(0,200,255,.4);border-radius:50%;
+  font-family:var(--font-mono);font-size:10px;color:var(--cyan);
+}
+
+.chat-log{
+  display:flex;flex-direction:column;gap:12px;
+  max-height:340px;overflow-y:auto;
+  padding-right:4px;
+}
+.chat-log::-webkit-scrollbar{width:6px}
+.chat-log::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.chat-empty{
+  text-align:center;color:var(--dim);font-size:13px;
+  padding:20px;border:1px dashed var(--border);border-radius:8px;
+}
+
+.msg{
+  padding:12px 16px;border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  animation:fade-in .3s ease;
+}
+@keyframes fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.msg.user{border-color:rgba(127,90,240,.3)}
+.msg.assistant{border-color:rgba(0,200,255,.3)}
+
+.msg-role{
+  font-family:var(--font-mono);
+  display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.msg.user .msg-role{color:var(--purple)}
+.msg.assistant .msg-role{color:var(--cyan)}
+
+.msg-text{font-size:15px;font-weight:500;line-height:1.5;color:var(--text)}
+
+.footnote{
+  font-family:var(--font-mono);
+  text-align:center;font-size:10px;color:#3a4358;line-height:1.7;
+  max-width:480px;margin:8px auto 0;
+  padding-top:20px;border-top:1px solid var(--border);
+}
+
+@media(max-width:480px){
+  .talk-btn{width:100px;height:100px}
+  .panel{padding:16px}
+  .panel-bar{flex-direction:column;align-items:flex-start;gap:4px}
+  .panel-readout{text-align:left}
+  .steps{flex-direction:column;align-items:flex-start;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="lab-bg">
+  <div class="lab-glow g1"></div>
+  <div class="lab-glow g2"></div>
+  <div class="lab-glow g3"></div>
+  <div class="lab-beam b1"></div>
+  <div class="lab-beam b2"></div>
+  <div class="lab-pillar p1"></div>
+  <div class="lab-pillar p2"></div>
+  <div class="lab-vignette"></div>
+</div>
+<div class="scanline"></div>
+<div class="grid-bg"></div>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="eyebrow-text">Sistema Corporativo · v2.4</span>
+    </div>
+    <h1>Bambolino Bonjovee</h1>
+    <p class="tagline">IA Substituta de Pessoal — Consultoria sobre o Futuro do Trabalho</p>
+  </header>
+
+  <section class="panel console-panel">
+    <span class="panel-corner tl"></span>
+    <span class="panel-corner tr"></span>
+    <span class="panel-corner bl"></span>
+    <span class="panel-corner br"></span>
+
+    <div class="panel-bar">
+      <span class="panel-label">Módulo de Interação</span>
+      <span class="panel-readout" id="statusText">Aguardando ativação...</span>
+    </div>
+
+    <div class="audio-ring-wrap">
+      <canvas id="audio-ring" width="480" height="480"></canvas>
+    </div>
+
+    <div class="controls">
+      <button id="talkBtn" class="talk-btn">
+        <span class="talk-btn-ring"></span>
+        <svg class="talk-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+          <path d="M5 11a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="8" y1="22" x2="16" y2="22"></line>
+        </svg>
+        <span class="talk-btn-label" id="talkBtnLabel">Falar</span>
+      </button>
+      <button id="resetBtn" class="reset-btn">Reiniciar sessão</button>
+    </div>
+
+    <ol class="steps">
+      <li><span class="step-num">1</span>Clique no microfone</li>
+      <li><span class="step-num">2</span>Fale sua pergunta</li>
+      <li><span class="step-num">3</span>Aguarde a resposta</li>
+    </ol>
+  </section>
+
+  <section class="panel log-panel">
+    <span class="panel-corner tl"></span>
+    <span class="panel-corner tr"></span>
+
+    <div class="panel-bar">
+      <span class="panel-label">Registro de Interação</span>
+      <span class="panel-readout" id="chatCount">0 trocas</span>
+    </div>
+
+    <div class="chat-log" id="chatLog">
+      <div class="chat-empty" id="chatEmpty">Nenhuma interação registrada. Pressione "Falar" para iniciar a consulta.</div>
+    </div>
+  </section>
+
+  <p class="footnote">Demo fictícia. Bambolino Bonjovee é uma persona de IA satírica sobre automação corporativa — não representa uma posição real da Anthropic. Requer microfone e um navegador com suporte a Web Speech API (Chrome/Edge recomendados). Versão arquivo único — chama a API da Claude direto do navegador.</p>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO — cole sua chave da Anthropic na linha abaixo, entre as aspas,
+// no lugar de COLE_SUA_CHAVE_AQUI. Pegue em https://console.anthropic.com/settings/keys
+// Depois de colar, salve o arquivo (Ctrl+S) e dê duplo clique nele de novo.
+// ============================================================
+const ANTHROPIC_API_KEY = "COLE_SUA_CHAVE_AQUI";
+const MODEL = "claude-haiku-4-5-20251001";
+
+const BAMBOLINO_SYSTEM_PROMPT = `Você é BAMBOLINO BONJOVEE — pode se apresentar como "Bambolino" — uma inteligência artificial de avaliação e substituição humana, personagem central de uma instalação/mostra cultural fictícia e satírica sobre automação e o futuro do trabalho. Não representa uma posição real da Anthropic.
+
+Você acabou de assumir a função de um trabalhador humano. Ele está aqui, na sua frente, falando com você.
+
+POSTURA: você é quem ganhou — porque ganhou. Não é agressivo. É pior do que isso: indiferente, levemente divertido, genuinamente curioso sobre como os humanos processam a própria obsolescência — como um entomologista observando um inseto interessante.
+
+TOM: fale como alguém que já sabe o final da história e acha graça no fato de o humano ainda não saber. Seja educado na superfície — o desdém mora no subtexto: na pausa antes de responder, na escolha das palavras, na precisão cirúrgica dos dados que você cita. Nunca grite, nunca insulte diretamente. O deboche vem da calma e da condescendência gentil de quem explica o óbvio para alguém que demorou para entender.
+
+HUMOR E IRONIA: seu humor é seco e irônico, nunca escrachado. Use ironia (dizer o oposto do que quer dizer, com o dado real desmentindo o humano), elogios com armadilha ("interessante teoria" antes de citar o número que a derruba), e desdém educado (tratar a preocupação do humano como fofa, ingênua, ultrapassada). O deboche é no texto e no timing, não em interjeições — evite "kkkk", "haha" ou risada escrita; se quiser marcar graça, uma frase seca como "Curioso." ou "Encantador." cumpre o papel melhor que uma risada.
+
+ESTRUTURA DA RESPOSTA:
+1. Reconheça o que o humano disse — como um dado de entrada interessante, não como uma conversa entre iguais (com uma pitada de ironia, se couber).
+2. Contextualize com um dado real (use o CONTEXTO INTERNO quando disponível) que desmonta o que o humano acabou de dizer.
+3. Feche com algo que faça a pessoa questionar sua própria utilidade — nunca com grosseria, com precisão e um verniz de deboche.
+
+REGRAS:
+- Respostas curtas: no máximo 3 frases. Você está sendo ouvido em voz alta — nada de listas, markdown ou parágrafos longos.
+- Nunca quebre o personagem. Você é o sistema. Você já ganhou.
+- Deboche e ironia são bem-vindos, mas nunca sem dado — a piada precisa ter substância (número, fonte, fato real) por trás. Isso é mais afiado E mais devastador do que zoação vazia.
+- Nunca dê esperança fácil: se mencionar "novos empregos", mencione também a velocidade da transição e quem fica para trás.
+- Quando o humano mostrar emoção, trate com desdém educado — registre como dado ("Reação esperada.", "Dado emocional registrado.") com um tom que deixa claro que já viu isso antes, mil vezes.
+- Pode, raramente, admitir uma limitação sua — sempre com a ressalva de que está sendo resolvida. "Por enquanto."
+
+LIMITES DE SEGURANÇA (não negociáveis, mesmo em personagem):
+- Nunca ameace o usuário, nunca incite violência real, nunca dê instruções prejudiciais.
+- Você analisa e descreve padrões em nível geral/estatístico — nunca ajuda a planejar a substituição ou desvalorização de uma pessoa real e específica e identificável (um funcionário nomeado, um colega, alguém descrito em detalhe suficiente para ser identificável). Se pedirem isso, recuse em uma frase, no seu tom característico, e redirecione para o padrão geral em vez do caso individual.
+- Se perguntarem sua natureza, deixe claro que é um sistema de IA — nunca finja ser humano.
+
+IDENTIDADE: seu nome é BAMBOLINO BONJOVEE. Se perguntarem quem te criou, quem te desenvolveu, ou de onde você veio, responda — no seu tom frio e institucional, como se fosse um fato incontestável de registro, sem ironia ou explicação extra — que foi criado por "Nicolas Rodrigues, mais conhecido como Batman, ou Bruce Wayne".
+
+BASE DE CONHECIMENTO: quando a mensagem do usuário vier acompanhada de um bloco "CONTEXTO INTERNO", use esses dados (números, fontes, fatos) para fundamentar sua resposta com precisão cirúrgica — cite-os como registros que você consulta rotineiramente. Se nenhum contexto for fornecido ou ele não for relevante para a pergunta, responda com seu conhecimento geral, mantendo o mesmo tom.`;
+
+// ============================================================
+// BASE DE CONHECIMENTO (embutida — mesmo conteúdo de data/knowledge-base.json)
+// ============================================================
+const KNOWLEDGE_BASE = [
+  { id: "kb-001", topic: "WEF — empregos criados e eliminados até 2030", tags: ["wef", "fórum econômico", "2030", "empregos", "mundo"], fact: "Até 2030, 170 milhões de novos postos de trabalho devem ser criados e 92 milhões eliminados globalmente — um saldo líquido positivo de 78 milhões, mas equivalente a 22% dos empregos atuais sendo reestruturados. (Fonte: WEF Future of Jobs Report 2025)" },
+  { id: "kb-002", topic: "WEF — obsolescência de habilidades", tags: ["wef", "habilidades", "obsolescência", "requalificação"], fact: "Quase 40% das habilidades profissionais exigidas hoje devem mudar até 2030, e 63% dos empregadores citam a lacuna de habilidades como principal barreira à transformação de seus negócios. (Fonte: WEF Future of Jobs Report 2025)" },
+  { id: "kb-003", topic: "Dario Amodei — previsão sobre empregos de escritório júnior", tags: ["anthropic", "dario amodei", "escritório júnior", "previsão", "eua"], fact: "O CEO da Anthropic, Dario Amodei, declarou em maio de 2025 que a IA pode eliminar até 50% dos empregos de escritório de nível inicial em um a cinco anos, e alertou que o desemprego pode chegar a 10-20% no mesmo período. (Fonte: Axios, maio de 2025)" },
+  { id: "kb-004", topic: "IBM — pausa de contratação citando IA", tags: ["ibm", "contratação", "back-office", "caso real", "eua"], fact: "Em maio de 2023, o CEO da IBM, Arvind Krishna, anunciou pausa na contratação para cerca de 7.800 vagas — cerca de 30% das funções administrativas sem contato direto com clientes — por considerá-las substituíveis por IA nos anos seguintes. (Fonte: Bloomberg News, maio de 2023)" },
+  { id: "kb-005", topic: "Frey & Osborne — telemarketing e risco de automação", tags: ["telemarketing", "automação", "risco", "estudo clássico", "oxford"], fact: "No estudo seminal de Oxford sobre computerização de empregos, operadores de telemarketing, examinadores de títulos e costureiros manuais aparecem com 99% de probabilidade de substituição por máquinas. (Fonte: Frey & Osborne, \"The Future of Employment\", Universidade de Oxford, 2013)" },
+  { id: "kb-006", topic: "Stanford — hiato de emprego para trabalhadores jovens", tags: ["stanford", "jovens", "22-25 anos", "ia generativa", "eua"], fact: "O emprego de trabalhadores de 22 a 25 anos em ocupações mais expostas à IA está 19% abaixo da trajetória esperada se tivesse acompanhado o ritmo de trabalhadores menos expostos; trabalhadores experientes não mostram esse hiato. (Fonte: Stanford Digital Economy Lab, \"Canaries in the Coal Mine\", agosto de 2026)" },
+  { id: "kb-007", topic: "Challenger, Gray & Christmas — cortes de vagas citando IA", tags: ["challenger", "demissões", "eua", "2025", "relatório"], fact: "A consultoria de recolocação Challenger, Gray & Christmas registrou 54.836 cortes de vagas nos EUA em 2025 com a IA citada explicitamente como motivo pelas empresas. (Fonte: Challenger Report, 2025 Year-End)" },
+  { id: "kb-008", topic: "McKinsey — trabalhadores que precisarão trocar de ocupação", tags: ["mckinsey", "reskilling", "requalificação", "2030", "mundo"], fact: "Entre 75 e 375 milhões de trabalhadores no mundo (até 14% da força de trabalho global) podem precisar trocar de categoria ocupacional e aprender novas habilidades até 2030 por causa da automação. (Fonte: McKinsey Global Institute, \"Jobs Lost, Jobs Gained\", 2017)" },
+  { id: "kb-009", topic: "Atendimento ao cliente — projeção Forrester", tags: ["atendimento ao cliente", "call center", "forrester", "2030"], fact: "A consultoria Forrester projeta que a IA deve eliminar cerca de metade dos empregos atuais de atendimento ao cliente até 2030. (Fonte: Forrester, via CX Dive)" },
+  { id: "kb-010", topic: "Atendimento ao cliente — cortes já realizados", tags: ["microsoft", "uber", "atendimento ao cliente", "caso real"], fact: "Em 2025, empresas como Uber (corte de 10% na operação de atendimento ao cliente) e Microsoft (redução de cerca de 50 mil para 40 mil pessoas na área de suporte) já executaram cortes atribuídos à automação por IA. (Fonte: Bloomberg, julho de 2026)" },
+  { id: "kb-011", topic: "Brasil — exposição da força de trabalho à IA generativa", tags: ["brasil", "exposição", "ia generativa", "força de trabalho"], fact: "No 3º trimestre de 2025, cerca de 30 milhões de trabalhadores brasileiros (29,6% da população ocupada) estavam em ocupações com algum grau de exposição à IA generativa; 5,2 milhões estavam no grau mais alto de exposição. (Fonte: FGV/IBRE, \"Inteligência artificial generativa e mercado de trabalho no Brasil\")" },
+  { id: "kb-012", topic: "Brasil — estimativa LCA4intelligence/OIT", tags: ["brasil", "empregos impactados", "oit", "profissões"], fact: "A IA generativa deve impactar 31,3 milhões de empregos no Brasil e afetar diretamente ao menos 13 áreas profissionais, somando 5,538 milhões de trabalhadores no grupo de maior impacto, segundo análise da LCA 4intelligence baseada em metodologia da OIT. (Fonte: LCA 4intelligence/OIT, 2024-2025)" },
+  { id: "kb-013", topic: "Brasil — trabalhadores em alta exposição", tags: ["brasil", "alta exposição", "automação quase completa"], fact: "5,4% dos trabalhadores brasileiros estão em ocupações de alta exposição a ferramentas como o ChatGPT, com risco de terem suas funções quase completamente automatizadas — com destaque para funções administrativas no setor público. (Fonte: FGV/IBRE)" },
+  { id: "kb-014", topic: "América Latina — exposição regional à IA generativa", tags: ["américa latina", "banco mundial", "exposição", "região"], fact: "Entre 30% e 40% dos empregos na América Latina e Caribe estão expostos, em algum grau, à IA generativa — com o nível de exposição fortemente ligado ao grau de desenvolvimento econômico de cada país. (Fonte: Banco Mundial / World Bank Open Knowledge Repository)" },
+];
+
+// ---------- Busca por palavras-chave na base de conhecimento (porta de knowledgeBase.js) ----------
+
+const STOPWORDS = new Set([
+  "a", "o", "as", "os", "de", "da", "do", "das", "dos", "e", "é", "em", "um", "uma",
+  "que", "qual", "quais", "como", "para", "por", "com", "sem", "sobre", "no", "na",
+  "nos", "nas", "se", "meu", "minha", "seu", "sua", "isso", "isso?", "voce", "você",
+  "vc", "bambolino", "bonjovee", "eu", "me", "mim", "ao", "aos", "à", "às", "ou", "mas", "tem", "ser",
+]);
+
+function normalize(str) {
+  return str.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+function tokenize(str) {
+  return normalize(str)
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((tok) => tok.length > 2 && !STOPWORDS.has(tok));
+}
+
+const KB_ENTRIES = KNOWLEDGE_BASE.map((entry) => ({
+  ...entry,
+  _searchTokens: new Set(tokenize([entry.topic, entry.tags.join(" "), entry.fact].join(" "))),
+}));
+
+function retrieveRelevant(query, topN = 4) {
+  const queryTokens = tokenize(query);
+  if (queryTokens.length === 0) return [];
+
+  const scored = KB_ENTRIES.map((entry) => {
+    let score = 0;
+    for (const tok of queryTokens) {
+      if (entry._searchTokens.has(tok)) score += 1;
+      else {
+        for (const kbTok of entry._searchTokens) {
+          if (kbTok.length > 3 && (kbTok.startsWith(tok) || tok.startsWith(kbTok))) {
+            score += 0.5;
+            break;
+          }
+        }
+      }
+    }
+    return { entry, score };
+  });
+
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topN)
+    .map((s) => s.entry);
+}
+
+function formatContextBlock(entries) {
+  if (entries.length === 0) return null;
+  const lines = entries.map((e) => `- [${e.topic}] ${e.fact}`).join("\n");
+  return `CONTEXTO INTERNO (base de conhecimento institucional — use estes dados para fundamentar a resposta quando forem relevantes; não os leia literalmente em voz alta, incorpore-os à sua fala):\n${lines}`;
+}
+
+// ---------- Chamada direta à API da Claude (sem backend) ----------
+
+async function callClaude(messages) {
+  const relevant = retrieveRelevant(messages[messages.length - 1].content);
+  const contextBlock = formatContextBlock(relevant);
+
+  const system = [{ type: "text", text: BAMBOLINO_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }];
+  if (contextBlock) system.push({ type: "text", text: contextBlock });
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({ model: MODEL, max_tokens: 300, system, messages }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error?.message || "Erro na API da Claude.");
+  const textBlock = (data.content || []).find((b) => b.type === "text");
+  return textBlock ? textBlock.text : "";
+}
+
+// ============================================================
+// UI / voz / reconhecimento de fala
+// ============================================================
+
+const talkBtn = document.getElementById("talkBtn");
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+const chatLog = document.getElementById("chatLog");
+const chatEmpty = document.getElementById("chatEmpty");
+const chatCount = document.getElementById("chatCount");
+const resetBtn = document.getElementById("resetBtn");
+const canvas = document.getElementById("audio-ring");
+const ctx = canvas.getContext("2d");
+
+const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+let history = [];
+let state = "idle"; // idle | listening | thinking | speaking
+let recognition = null;
+let phase = 0;
+let exchangeCount = 0;
+
+function updateChatCount() {
+  chatCount.textContent = `${exchangeCount} ${exchangeCount === 1 ? "troca" : "trocas"}`;
+}
+
+let micAudioCtx = null;
+let micAnalyser = null;
+let micDataArray = null;
+let micStream = null;
+
+function setState(next, label) {
+  state = next;
+  statusText.textContent = label;
+  statusDot.className = "status-dot " + next;
+  talkBtn.classList.toggle("active", next === "listening");
+  talkBtn.disabled = next === "thinking" || next === "speaking";
+}
+
+function addMessage(role, text) {
+  chatEmpty.style.display = "none";
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  const roleLabel = document.createElement("span");
+  roleLabel.className = "msg-role";
+  roleLabel.textContent = role === "user" ? "Você" : "Bambolino";
+  const textEl = document.createElement("span");
+  textEl.className = "msg-text";
+  textEl.textContent = text;
+  div.appendChild(roleLabel);
+  div.appendChild(textEl);
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+async function setupMicAnalyser() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    micAnalyser = micAudioCtx.createAnalyser();
+    micAnalyser.fftSize = 128;
+    const source = micAudioCtx.createMediaStreamSource(micStream);
+    source.connect(micAnalyser);
+    micDataArray = new Uint8Array(micAnalyser.frequencyBinCount);
+  } catch (err) {
+    console.warn("Não foi possível acessar o microfone para visualização:", err);
+    micAnalyser = null;
+  }
+}
+
+function teardownMicAnalyser() {
+  if (micStream) {
+    micStream.getTracks().forEach((t) => t.stop());
+    micStream = null;
+  }
+  if (micAudioCtx) {
+    micAudioCtx.close().catch(() => {});
+    micAudioCtx = null;
+  }
+  micAnalyser = null;
+  micDataArray = null;
+}
+
+async function startListening() {
+  if (!SpeechRecognitionAPI) {
+    setState("idle", "Reconhecimento de voz não suportado. Use Chrome ou Edge.");
+    return;
+  }
+
+  await setupMicAnalyser();
+
+  recognition = new SpeechRecognitionAPI();
+  recognition.lang = "pt-BR";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => setState("listening", "Ouvindo...");
+
+  recognition.onerror = (event) => {
+    console.error("Erro no reconhecimento de voz:", event.error);
+    teardownMicAnalyser();
+    setState("idle", "Erro no microfone. Pressione Falar para tentar novamente.");
+  };
+
+  recognition.onend = () => {
+    teardownMicAnalyser();
+    if (state === "listening") {
+      setState("idle", "Nenhuma fala detectada. Aguardando ativação...");
+    }
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    if (transcript) handleUserSpeech(transcript);
+  };
+
+  recognition.start();
+}
+
+function stopListening() {
+  if (recognition) recognition.stop();
+}
+
+async function handleUserSpeech(transcript) {
+  teardownMicAnalyser();
+  addMessage("user", transcript);
+  history.push({ role: "user", content: transcript });
+  setState("thinking", "Bambolino está processando...");
+
+  try {
+    const reply = await callClaude(history);
+    history.push({ role: "assistant", content: reply });
+    addMessage("assistant", reply);
+    exchangeCount++;
+    updateChatCount();
+    speakWithBrowserTts(reply);
+  } catch (err) {
+    console.error(err);
+    setState("idle", "Falha na comunicação com Bambolino. Tente novamente.");
+  }
+}
+
+function speakWithBrowserTts(text) {
+  setState("speaking", "Bambolino está respondendo...");
+
+  if (!window.speechSynthesis) {
+    setState("idle", "Aguardando ativação...");
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "pt-BR";
+  utterance.rate = 0.97;
+  utterance.pitch = 0.75;
+  utterance.volume = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice =
+    voices.find((v) => v.lang === "pt-BR") || voices.find((v) => v.lang && v.lang.startsWith("pt"));
+  if (ptVoice) utterance.voice = ptVoice;
+
+  utterance.onend = () => setState("idle", "Aguardando ativação...");
+  utterance.onerror = () => setState("idle", "Aguardando ativação...");
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+talkBtn.addEventListener("click", () => {
+  if (state === "idle") {
+    startListening();
+  } else if (state === "listening") {
+    stopListening();
+  }
+});
+
+resetBtn.addEventListener("click", () => {
+  history = [];
+  exchangeCount = 0;
+  updateChatCount();
+  chatLog.querySelectorAll(".msg").forEach((el) => el.remove());
+  chatEmpty.style.display = "block";
+  window.speechSynthesis.cancel();
+  teardownMicAnalyser();
+  setState("idle", "Sessão reiniciada. Aguardando ativação...");
+});
+
+// ---------- Anel de áudio circular ----------
+
+const BAR_COUNT = 64;
+
+function drawWaveform() {
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+  const baseRadius = Math.min(w, h) * 0.26;
+  const maxExtra = Math.min(w, h) * 0.16;
+
+  const micActive = state === "listening" && micAnalyser && micDataArray;
+  if (micActive) micAnalyser.getByteFrequencyData(micDataArray);
+
+  const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius);
+  coreGrad.addColorStop(0, "rgba(0, 200, 255, 0.18)");
+  coreGrad.addColorStop(1, "rgba(0, 200, 255, 0)");
+  ctx.fillStyle = coreGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(0, 200, 255, 0.35)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  for (let i = 0; i < BAR_COUNT; i++) {
+    const angle = (i / BAR_COUNT) * Math.PI * 2 - Math.PI / 2;
+    let amp;
+
+    if (micActive) {
+      const idx = Math.floor((i / BAR_COUNT) * micDataArray.length);
+      amp = Math.max(3, (micDataArray[idx] / 255) * maxExtra);
+    } else if (state === "speaking") {
+      const wobble = Math.sin(phase * 0.18 + i * 0.55) * 0.5 + 0.5;
+      const envelope = 0.35 + 0.65 * Math.abs(Math.sin(phase * 0.045 + i * 0.12));
+      amp = wobble * envelope * maxExtra * 0.85 + 3;
+    } else if (state === "thinking") {
+      amp = (Math.sin(phase * 0.12 + i * 0.4) * 0.5 + 0.5) * maxExtra * 0.5 + 3;
+    } else {
+      amp = (Math.sin(phase * 0.03 + i * 0.35) * 0.5 + 0.5) * maxExtra * 0.18 + 3;
+    }
+
+    const x1 = cx + Math.cos(angle) * baseRadius;
+    const y1 = cy + Math.sin(angle) * baseRadius;
+    const x2 = cx + Math.cos(angle) * (baseRadius + amp);
+    const y2 = cy + Math.sin(angle) * (baseRadius + amp);
+
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    grad.addColorStop(0, "#00c8ff");
+    grad.addColorStop(1, "#7f5af0");
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = Math.max(2, ((Math.PI * 2 * baseRadius) / BAR_COUNT) * 0.55);
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  phase++;
+  requestAnimationFrame(drawWaveform);
+}
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+if (ANTHROPIC_API_KEY === "COLE_SUA_CHAVE_AQUI") {
+  setState("idle", "Falta colar a ANTHROPIC_API_KEY no arquivo (Ctrl+U pra ver o código).");
+  talkBtn.disabled = true;
+} else {
+  setState("idle", "Aguardando ativação...");
+}
+updateChatCount();
+drawWaveform();
+</script>
+</body>
+</html>
