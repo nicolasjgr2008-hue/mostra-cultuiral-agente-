@@ -223,6 +223,23 @@ h1{
 }
 .reset-btn:hover{border-color:var(--purple);color:var(--text)}
 
+.steps{
+  list-style:none;
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;
+  margin-top:22px;padding-top:18px;
+  border-top:1px solid var(--border);
+}
+.steps li{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--dim);
+}
+.step-num{
+  display:flex;align-items:center;justify-content:center;
+  width:18px;height:18px;flex:0 0 auto;
+  border:1px solid rgba(0,200,255,.4);border-radius:50%;
+  font-family:var(--font-mono);font-size:10px;color:var(--cyan);
+}
+
 .chat-log{
   display:flex;flex-direction:column;gap:12px;
   max-height:340px;overflow-y:auto;
@@ -269,4 +286,5 @@ h1{
   .panel{padding:16px}
   .panel-bar{flex-direction:column;align-items:flex-start;gap:4px}
   .panel-readout{text-align:left}
+  .steps{flex-direction:column;align-items:flex-start;gap:10px}
 }

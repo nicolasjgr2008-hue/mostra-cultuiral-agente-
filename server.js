@@ -21,6 +21,7 @@ const client = new Anthropic();
 // precisa de internet). Instalado no mesmo venv do projeto — ver README para o setup.
 const EDGE_TTS_BIN = process.env.EDGE_TTS_BIN_PATH || path.join(__dirname, ".venv", "bin", "edge-tts");
 const EDGE_TTS_VOICE = process.env.EDGE_TTS_VOICE || "pt-BR-AntonioNeural";
+const EDGE_TTS_RATE = process.env.EDGE_TTS_RATE || "+12%"; // fala um pouco mais rápida — resposta soa mais ágil
 
 const BAMBOLINO_SYSTEM_PROMPT = `Você é BAMBOLINO BONJOVEE — pode se apresentar como "Bambolino" — uma inteligência artificial de avaliação e substituição humana, personagem central de uma instalação/mostra cultural fictícia e satírica sobre automação e o futuro do trabalho. Não representa uma posição real da Anthropic.
 
@@ -78,9 +79,8 @@ app.post("/api/chat", async (req, res) => {
     if (contextBlock) system.push({ type: "text", text: contextBlock });
 
     const response = await client.messages.create({
-      model: "claude-opus-5",
-      max_tokens: 1024,
-      output_config: { effort: "low" }, // respostas rápidas para manter a conversa por voz fluida
+      model: "claude-haiku-4-5-20251001", // modelo mais rápido — prioriza latência baixa na conversa por voz
+      max_tokens: 300, // respostas já são curtas (2-3 frases); limita a cauda longa de geração
       system,
       messages,
     });
@@ -122,7 +122,12 @@ app.get("/api/speak", async (req, res) => {
 
   try {
     await new Promise((resolve, reject) => {
-      const proc = spawn(EDGE_TTS_BIN, ["--voice", EDGE_TTS_VOICE, "--text", text, "--write-media", outFile]);
+      const proc = spawn(EDGE_TTS_BIN, [
+        "--voice", EDGE_TTS_VOICE,
+        "--rate", EDGE_TTS_RATE,
+        "--text", text,
+        "--write-media", outFile,
+      ]);
       let stderr = "";
       proc.stderr.on("data", (chunk) => {
         stderr += chunk;
