@@ -6,12 +6,17 @@ import { fileURLToPath } from "url";
 import { existsSync } from "fs";
 import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
-import { spawn } from "child_process";
+import { spawn, exec } from "child_process";
 import { retrieveRelevant, formatContextBlock } from "./knowledgeBase.js";
 
-dotenv.config();
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Empacotado com pkg (.exe): os arquivos reais (public/, data/, .env, .venv) ficam ao
+// lado do executável, não dentro do snapshot virtual do pkg — por isso usamos a pasta
+// do próprio .exe (process.execPath) em vez de __dirname quando rodando empacotado.
+const baseDir = process.pkg ? path.dirname(process.execPath) : __dirname;
+
+dotenv.config({ path: path.join(baseDir, ".env") });
+
 const PORT = process.env.PORT || 3000;
 
 // Resolves credentials from ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN / `ant auth login`.
@@ -23,8 +28,8 @@ const client = new Anthropic();
 const EDGE_TTS_BIN =
   process.env.EDGE_TTS_BIN_PATH ||
   (process.platform === "win32"
-    ? path.join(__dirname, ".venv", "Scripts", "edge-tts.exe")
-    : path.join(__dirname, ".venv", "bin", "edge-tts"));
+    ? path.join(baseDir, ".venv", "Scripts", "edge-tts.exe")
+    : path.join(baseDir, ".venv", "bin", "edge-tts"));
 const EDGE_TTS_VOICE = process.env.EDGE_TTS_VOICE || "pt-BR-AntonioNeural";
 const EDGE_TTS_RATE = process.env.EDGE_TTS_RATE || "+12%"; // fala um pouco mais rápida — resposta soa mais ágil
 
@@ -62,7 +67,7 @@ BASE DE CONHECIMENTO: quando a mensagem do usuário vier acompanhada de um bloco
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(baseDir, "public")));
 
 app.post("/api/chat", async (req, res) => {
   const { messages } = req.body;
@@ -156,5 +161,14 @@ app.get("/api/speak", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`BAMBOLINO BONJOVEE rodando em http://localhost:${PORT}`);
+  const url = `http://localhost:${PORT}`;
+  console.log(`BAMBOLINO BONJOVEE rodando em ${url}`);
+
+  // Abre o navegador padrão automaticamente — só quando empacotado como .exe,
+  // pra dar a sensação de "aplicativo" (dois cliques e já abre).
+  if (process.pkg) {
+    const openCommand =
+      process.platform === "win32" ? "start" : process.platform === "darwin" ? "open" : "xdg-open";
+    exec(`${openCommand} ${url}`, () => {});
+  }
 });

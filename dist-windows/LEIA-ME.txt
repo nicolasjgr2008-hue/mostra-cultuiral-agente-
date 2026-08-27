@@ -1,0 +1,41 @@
+BAMBOLINO BONJOVEE — Como rodar no Windows
+============================================
+
+1. Extraia esta pasta inteira em qualquer lugar (ex: Área de Trabalho).
+   Mantenha todos os arquivos e pastas juntos (bambolino.exe, public\, data\, .env.example).
+
+2. Renomeie o arquivo ".env.example" para ".env" (ou copie ele e renomeie a cópia).
+   Abra o ".env" com o Bloco de Notas e cole sua chave da Anthropic na linha:
+       ANTHROPIC_API_KEY=sk-ant-...
+   (pegue a chave em https://console.anthropic.com/settings/keys, se não tiver
+   uma à mão — nenhuma chave real vem dentro deste pacote, por segurança).
+
+3. Dê DUPLO CLIQUE em "bambolino.exe".
+   - Vai abrir uma janela preta (terminal) — é normal, não feche ela.
+   - O navegador deve abrir sozinho em http://localhost:3000
+   - Se o Windows Defender / SmartScreen avisar "Windows protegeu seu PC",
+     clique em "Mais informações" e depois em "Executar assim mesmo"
+     (isso acontece porque o .exe não é assinado digitalmente, não porque
+     tem algo de errado com ele).
+
+4. Se o navegador não abrir sozinho, abra manualmente e digite:
+   http://localhost:3000
+
+5. Pra fechar o Bambolino, feche a janela preta do terminal.
+
+------------------------------------------------------------
+Voz (opcional, pra ficar mais natural)
+------------------------------------------------------------
+Sem nada extra, o Bambolino já fala usando a voz nativa do navegador
+(um pouco mais robótica, mas funciona sem instalar nada).
+
+Pra usar a voz Neural da Microsoft (mais natural), instale o Python:
+  1. https://www.python.org/downloads/ — baixe e instale
+     (marque "Add python.exe to PATH" durante a instalação).
+  2. Abra o "Prompt de Comando" ou "Git Bash" NESTA MESMA PASTA
+     (clique com o botão direito dentro da pasta > "Abrir no Terminal",
+     ou navegue até aqui com "cd").
+  3. Rode:
+       python -m venv .venv
+       .venv\Scripts\pip install edge-tts
+  4. Feche o bambolino.exe (se estiver aberto) e abra de novo.

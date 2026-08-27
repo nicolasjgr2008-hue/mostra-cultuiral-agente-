@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bambolino Bonjovee — IA Substituta de Pessoal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="lab-bg">
+  <div class="lab-glow g1"></div>
+  <div class="lab-glow g2"></div>
+  <div class="lab-glow g3"></div>
+  <div class="lab-beam b1"></div>
+  <div class="lab-beam b2"></div>
+  <div class="lab-pillar p1"></div>
+  <div class="lab-pillar p2"></div>
+  <div class="lab-vignette"></div>
+</div>
+<div class="scanline"></div>
+<div class="grid-bg"></div>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="eyebrow-text">Sistema Corporativo · v2.4</span>
+    </div>
+    <h1>Bambolino Bonjovee</h1>
+    <p class="tagline">IA Substituta de Pessoal — Consultoria sobre o Futuro do Trabalho</p>
+  </header>
+
+  <section class="panel console-panel">
+    <span class="panel-corner tl"></span>
+    <span class="panel-corner tr"></span>
+    <span class="panel-corner bl"></span>
+    <span class="panel-corner br"></span>
+
+    <div class="panel-bar">
+      <span class="panel-label">Módulo de Interação</span>
+      <span class="panel-readout" id="statusText">Aguardando ativação...</span>
+    </div>
+
+    <div class="audio-ring-wrap">
+      <canvas id="audio-ring" width="480" height="480"></canvas>
+    </div>
+
+    <div class="controls">
+      <button id="talkBtn" class="talk-btn">
+        <span class="talk-btn-ring"></span>
+        <svg class="talk-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+          <path d="M5 11a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="8" y1="22" x2="16" y2="22"></line>
+        </svg>
+        <span class="talk-btn-label" id="talkBtnLabel">Falar</span>
+      </button>
+      <button id="resetBtn" class="reset-btn">Reiniciar sessão</button>
+    </div>
+
+    <ol class="steps">
+      <li><span class="step-num">1</span>Clique no microfone</li>
+      <li><span class="step-num">2</span>Fale sua pergunta</li>
+      <li><span class="step-num">3</span>Aguarde a resposta</li>
+    </ol>
+  </section>
+
+  <section class="panel log-panel">
+    <span class="panel-corner tl"></span>
+    <span class="panel-corner tr"></span>
+
+    <div class="panel-bar">
+      <span class="panel-label">Registro de Interação</span>
+      <span class="panel-readout" id="chatCount">0 trocas</span>
+    </div>
+
+    <div class="chat-log" id="chatLog">
+      <div class="chat-empty" id="chatEmpty">Nenhuma interação registrada. Pressione "Falar" para iniciar a consulta.</div>
+    </div>
+  </section>
+
+  <p class="footnote">Demo fictícia. Bambolino Bonjovee é uma persona de IA satírica sobre automação corporativa — não representa uma posição real da Anthropic. Requer microfone e um navegador com suporte a Web Speech API (Chrome/Edge recomendados).</p>
+</div>
+
+<audio id="ariaAudio" preload="auto" style="display:none"></audio>
+<script src="app.js"></script>
+</body>
+</html>

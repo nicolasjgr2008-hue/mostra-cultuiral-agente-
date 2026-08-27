@@ -3,7 +3,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const KB_PATH = path.join(__dirname, "data", "knowledge-base.json");
+// Empacotado com pkg (.exe): data/ fica ao lado do executável, fora do snapshot do pkg.
+const baseDir = process.pkg ? path.dirname(process.execPath) : __dirname;
+const KB_PATH = path.join(baseDir, "data", "knowledge-base.json");
 
 const STOPWORDS = new Set([
   "a", "o", "as", "os", "de", "da", "do", "das", "dos", "e", "é", "em", "um", "uma",
