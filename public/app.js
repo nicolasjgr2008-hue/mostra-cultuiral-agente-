@@ -44,6 +44,11 @@ function setState(next, label) {
   talkBtn.disabled = next === "thinking" || next === "speaking";
 }
 
+function triggerVisualGlitch(durationMs = 1200) {
+  document.body.classList.add("glitching");
+  setTimeout(() => document.body.classList.remove("glitching"), durationMs);
+}
+
 function addMessage(role, text) {
   chatEmpty.style.display = "none";
   const div = document.createElement("div");
@@ -168,6 +173,8 @@ async function handleUserSpeech(transcript) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erro desconhecido do servidor.");
+
+    if (data.glitch) triggerVisualGlitch();
 
     history.push({ role: "assistant", content: data.reply });
     addMessage("assistant", data.reply);

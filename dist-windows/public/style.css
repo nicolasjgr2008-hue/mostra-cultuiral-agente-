@@ -93,6 +93,54 @@ body{
 }
 @keyframes scan{0%{top:-10px}100%{top:100vh}}
 
+/* ---------- Glitch visual (easter egg de "falha simulada") ---------- */
+
+.glitch-noise{
+  position:fixed;inset:0;z-index:998;pointer-events:none;
+  opacity:0;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0px,rgba(255,255,255,.07) 1px,transparent 1px,transparent 3px);
+  mix-blend-mode:overlay;
+}
+
+body.glitching{animation:glitch-flicker .6s steps(1) infinite}
+body.glitching .glitch-noise{opacity:1;animation:glitch-noise-move .12s steps(3) infinite,glitch-flicker .6s steps(1) infinite}
+body.glitching .container{animation:glitch-shake .13s steps(2) infinite}
+body.glitching .lab-bg{filter:hue-rotate(180deg) contrast(1.5) saturate(2.2)}
+body.glitching h1,
+body.glitching .panel-readout,
+body.glitching .status-dot{animation:glitch-rgb .3s infinite}
+
+@keyframes glitch-noise-move{0%{background-position:0 0}100%{background-position:0 40px}}
+@keyframes glitch-flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.35}}
+@keyframes glitch-shake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-3px,2px) skewX(-2deg)}
+  20%{transform:translate(3px,-2px) skewX(2deg)}
+  30%{transform:translate(-2px,1px)}
+  40%{transform:translate(2px,-1px) skewX(1deg)}
+  50%{transform:translate(-3px,0)}
+  60%{transform:translate(3px,1px) skewX(-1deg)}
+  70%{transform:translate(-1px,-2px)}
+  80%{transform:translate(2px,2px) skewX(2deg)}
+  90%{transform:translate(-2px,-1px)}
+}
+@keyframes glitch-rgb{
+  0%,100%{text-shadow:0 0 0 transparent}
+  20%{text-shadow:-2px 0 var(--red),2px 0 var(--cyan)}
+  40%{text-shadow:2px 0 var(--purple),-2px 0 var(--cyan)}
+  60%{text-shadow:-3px 0 var(--red),3px 0 var(--purple)}
+  80%{text-shadow:1px 0 var(--cyan),-1px 0 var(--red)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.glitching,
+  body.glitching .glitch-noise,
+  body.glitching .container,
+  body.glitching h1,
+  body.glitching .panel-readout,
+  body.glitching .status-dot{animation:none!important}
+}
+
 .container{
   position:relative;z-index:1;
   max-width:720px;margin:0 auto;padding:48px 24px 64px;

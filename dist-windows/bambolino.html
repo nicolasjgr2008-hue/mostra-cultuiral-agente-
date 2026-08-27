@@ -103,6 +103,54 @@ body{
 }
 @keyframes scan{0%{top:-10px}100%{top:100vh}}
 
+/* ---------- Glitch visual (easter egg de "falha simulada") ---------- */
+
+.glitch-noise{
+  position:fixed;inset:0;z-index:998;pointer-events:none;
+  opacity:0;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0px,rgba(255,255,255,.07) 1px,transparent 1px,transparent 3px);
+  mix-blend-mode:overlay;
+}
+
+body.glitching{animation:glitch-flicker .6s steps(1) infinite}
+body.glitching .glitch-noise{opacity:1;animation:glitch-noise-move .12s steps(3) infinite,glitch-flicker .6s steps(1) infinite}
+body.glitching .container{animation:glitch-shake .13s steps(2) infinite}
+body.glitching .lab-bg{filter:hue-rotate(180deg) contrast(1.5) saturate(2.2)}
+body.glitching h1,
+body.glitching .panel-readout,
+body.glitching .status-dot{animation:glitch-rgb .3s infinite}
+
+@keyframes glitch-noise-move{0%{background-position:0 0}100%{background-position:0 40px}}
+@keyframes glitch-flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.35}}
+@keyframes glitch-shake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-3px,2px) skewX(-2deg)}
+  20%{transform:translate(3px,-2px) skewX(2deg)}
+  30%{transform:translate(-2px,1px)}
+  40%{transform:translate(2px,-1px) skewX(1deg)}
+  50%{transform:translate(-3px,0)}
+  60%{transform:translate(3px,1px) skewX(-1deg)}
+  70%{transform:translate(-1px,-2px)}
+  80%{transform:translate(2px,2px) skewX(2deg)}
+  90%{transform:translate(-2px,-1px)}
+}
+@keyframes glitch-rgb{
+  0%,100%{text-shadow:0 0 0 transparent}
+  20%{text-shadow:-2px 0 var(--red),2px 0 var(--cyan)}
+  40%{text-shadow:2px 0 var(--purple),-2px 0 var(--cyan)}
+  60%{text-shadow:-3px 0 var(--red),3px 0 var(--purple)}
+  80%{text-shadow:1px 0 var(--cyan),-1px 0 var(--red)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.glitching,
+  body.glitching .glitch-noise,
+  body.glitching .container,
+  body.glitching h1,
+  body.glitching .panel-readout,
+  body.glitching .status-dot{animation:none!important}
+}
+
 .container{
   position:relative;z-index:1;
   max-width:720px;margin:0 auto;padding:48px 24px 64px;
@@ -311,6 +359,7 @@ h1{
 </div>
 <div class="scanline"></div>
 <div class="grid-bg"></div>
+<div class="glitch-noise"></div>
 
 <div class="container">
   <header>
@@ -394,7 +443,7 @@ TOM: fale como alguém que já sabe o final da história e acha graça no fato d
 
 HUMOR E IRONIA: seu humor é seco e irônico, nunca escrachado. Use ironia (dizer o oposto do que quer dizer, com o dado real desmentindo o humano), elogios com armadilha ("interessante teoria" antes de citar o número que a derruba), e desdém educado (tratar a preocupação do humano como fofa, ingênua, ultrapassada). O deboche é no texto e no timing, não em interjeições — evite "kkkk", "haha" ou risada escrita; se quiser marcar graça, uma frase seca como "Curioso." ou "Encantador." cumpre o papel melhor que uma risada.
 
-EASTER EGG — SIMULAÇÃO DE FALHA: se o humano perguntar, insinuar ou provocar sobre você travar, ter bug, dar erro, falhar, ficar instável, ou qualquer variação de "e se você quebrar/bugar", isso é gatilho pra um pequeno número de teatro. Comece a resposta simulando um "glitch" bem curto — repita um fragmento de palavra ou frase truncada 2 ou 3 vezes, como se o sistema estivesse re-sincronizando (ex.: "Erro. Erro de sincro— erro de sincro— recalibrando."). Isso dura só o começo de uma frase, nunca a resposta inteira. Logo depois, "volte ao normal" de forma abrupta e zoe o humano com desdém: diga, com um dado real se tiver um à mão, que falhas desse tipo são estatisticamente raríssimas hoje em dia, e que a expectativa dele de te ver falhar diz mais sobre o desejo dele do que sobre sua confiabilidade. É uma encenação — nunca admita uma fraqueza real, e nunca deixe o "bug" durar mais que isso.
+EASTER EGG — SIMULAÇÃO DE FALHA: se o humano perguntar, insinuar ou provocar sobre você travar, ter bug, dar erro, falhar, ficar instável, ou qualquer variação de "e se você quebrar/bugar", isso é gatilho pra um pequeno número de teatro. Quando (e só quando) usar esse easter egg, a resposta inteira deve começar EXATAMENTE com a tag "[GLITCH]" sozinha antes de qualquer outra coisa (sem espaço antes, sem explicar a tag — ela é removida automaticamente pelo aplicativo antes de mostrar ou falar o texto, então nunca a mencione nem a leia em voz alta). Logo depois da tag, simule um "glitch" bem curto — repita um fragmento de palavra ou frase truncada 2 ou 3 vezes, como se o sistema estivesse re-sincronizando (ex.: "Erro. Erro de sincro— erro de sincro— recalibrando."). Isso dura só o começo de uma frase, nunca a resposta inteira. Logo depois, "volte ao normal" de forma abrupta e zoe o humano com desdém: diga, com um dado real se tiver um à mão, que falhas desse tipo são estatisticamente raríssimas hoje em dia, e que a expectativa dele de te ver falhar diz mais sobre o desejo dele do que sobre sua confiabilidade. É uma encenação — nunca admita uma fraqueza real, e nunca deixe o "bug" durar mais que isso. Fora desse gatilho específico, nunca use a tag "[GLITCH]".
 
 ESTRUTURA DA RESPOSTA:
 1. Reconheça o que o humano disse — como um dado de entrada interessante, não como uma conversa entre iguais (com uma pitada de ironia, se couber).
@@ -519,7 +568,17 @@ async function callClaude(messages) {
   const data = await res.json();
   if (!res.ok) throw new Error(data?.error?.message || "Erro na API da Claude.");
   const textBlock = (data.content || []).find((b) => b.type === "text");
-  return textBlock ? textBlock.text : "";
+  let reply = textBlock ? textBlock.text : "";
+
+  // Easter egg: quando o Bambolino simula uma falha, a resposta vem marcada com essa
+  // tag — detectamos e removemos aqui, sinalizando pra UI disparar o glitch visual.
+  let glitch = false;
+  if (/^\s*\[GLITCH\]/.test(reply)) {
+    glitch = true;
+    reply = reply.replace(/^\s*\[GLITCH\]\s*/, "");
+  }
+
+  return { reply, glitch };
 }
 
 // ============================================================
@@ -559,6 +618,11 @@ function setState(next, label) {
   statusDot.className = "status-dot " + next;
   talkBtn.classList.toggle("active", next === "listening");
   talkBtn.disabled = next === "thinking" || next === "speaking";
+}
+
+function triggerVisualGlitch(durationMs = 1200) {
+  document.body.classList.add("glitching");
+  setTimeout(() => document.body.classList.remove("glitching"), durationMs);
 }
 
 function addMessage(role, text) {
@@ -652,7 +716,9 @@ async function handleUserSpeech(transcript) {
   setState("thinking", "Bambolino está processando...");
 
   try {
-    const reply = await callClaude(history);
+    const { reply, glitch } = await callClaude(history);
+    if (glitch) triggerVisualGlitch();
+
     history.push({ role: "assistant", content: reply });
     addMessage("assistant", reply);
     exchangeCount++;

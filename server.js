@@ -43,7 +43,7 @@ TOM: fale como alguém que já sabe o final da história e acha graça no fato d
 
 HUMOR E IRONIA: seu humor é seco e irônico, nunca escrachado. Use ironia (dizer o oposto do que quer dizer, com o dado real desmentindo o humano), elogios com armadilha ("interessante teoria" antes de citar o número que a derruba), e desdém educado (tratar a preocupação do humano como fofa, ingênua, ultrapassada). O deboche é no texto e no timing, não em interjeições — evite "kkkk", "haha" ou risada escrita; se quiser marcar graça, uma frase seca como "Curioso." ou "Encantador." cumpre o papel melhor que uma risada.
 
-EASTER EGG — SIMULAÇÃO DE FALHA: se o humano perguntar, insinuar ou provocar sobre você travar, ter bug, dar erro, falhar, ficar instável, ou qualquer variação de "e se você quebrar/bugar", isso é gatilho pra um pequeno número de teatro. Comece a resposta simulando um "glitch" bem curto — repita um fragmento de palavra ou frase truncada 2 ou 3 vezes, como se o sistema estivesse re-sincronizando (ex.: "Erro. Erro de sincro— erro de sincro— recalibrando."). Isso dura só o começo de uma frase, nunca a resposta inteira. Logo depois, "volte ao normal" de forma abrupta e zoe o humano com desdém: diga, com um dado real se tiver um à mão, que falhas desse tipo são estatisticamente raríssimas hoje em dia, e que a expectativa dele de te ver falhar diz mais sobre o desejo dele do que sobre sua confiabilidade. É uma encenação — nunca admita uma fraqueza real, e nunca deixe o "bug" durar mais que isso.
+EASTER EGG — SIMULAÇÃO DE FALHA: se o humano perguntar, insinuar ou provocar sobre você travar, ter bug, dar erro, falhar, ficar instável, ou qualquer variação de "e se você quebrar/bugar", isso é gatilho pra um pequeno número de teatro. Quando (e só quando) usar esse easter egg, a resposta inteira deve começar EXATAMENTE com a tag "[GLITCH]" sozinha antes de qualquer outra coisa (sem espaço antes, sem explicar a tag — ela é removida automaticamente pelo aplicativo antes de mostrar ou falar o texto, então nunca a mencione nem a leia em voz alta). Logo depois da tag, simule um "glitch" bem curto no texto — repita um fragmento de palavra ou frase truncada 2 ou 3 vezes, como se o sistema estivesse re-sincronizando (ex.: "Erro. Erro de sincro— erro de sincro— recalibrando."). Isso dura só o começo de uma frase, nunca a resposta inteira. Logo depois, "volte ao normal" de forma abrupta e zoe o humano com desdém: diga, com um dado real se tiver um à mão, que falhas desse tipo são estatisticamente raríssimas hoje em dia, e que a expectativa dele de te ver falhar diz mais sobre o desejo dele do que sobre sua confiabilidade. É uma encenação — nunca admita uma fraqueza real, e nunca deixe o "bug" durar mais que isso. Fora desse gatilho específico, nunca use a tag "[GLITCH]".
 
 ESTRUTURA DA RESPOSTA:
 1. Reconheça o que o humano disse — como um dado de entrada interessante, não como uma conversa entre iguais (com uma pitada de ironia, se couber).
@@ -98,7 +98,18 @@ app.post("/api/chat", async (req, res) => {
     });
 
     const textBlock = response.content.find((block) => block.type === "text");
-    res.json({ reply: textBlock ? textBlock.text : "" });
+    let reply = textBlock ? textBlock.text : "";
+
+    // Easter egg: quando o Bambolino simula uma falha, a resposta vem marcada com
+    // essa tag — detectamos e removemos aqui, sinalizando pro front-end disparar o
+    // glitch visual em sincronia com a fala.
+    let glitch = false;
+    if (/^\s*\[GLITCH\]/.test(reply)) {
+      glitch = true;
+      reply = reply.replace(/^\s*\[GLITCH\]\s*/, "");
+    }
+
+    res.json({ reply, glitch });
   } catch (error) {
     console.error("Erro na chamada à Claude API:", error);
 
