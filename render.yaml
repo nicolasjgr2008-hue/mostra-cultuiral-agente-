@@ -1,10 +1,10 @@
 services:
   - type: web
     name: bambolino-bonjovee
-    runtime: node
+    runtime: docker
     plan: free
-    buildCommand: npm install
-    startCommand: node server.js
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: EDGE_TTS_VOICE
+        value: pt-BR-AntonioNeural
